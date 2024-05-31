@@ -1,96 +1,128 @@
-import React, { useState, useEffect } from 'react';
-import { DragDropContext } from 'react-beautiful-dnd';
-import api from './api';
-import './App.css';
-import Column from './Column';
+import {useEffect, useState} from "react";
+import './App.css'
+import api from './Api';
 
 function App() {
-  const [tasks, setTasks] = useState({
-    'new': [],
-    'in progress': [],
-    'completed': [],
-  });
-
-  const [newTaskTitle, setNewTaskTitle] = useState('');
+  const [boards, setBoards] = useState([]);
 
   useEffect(() => {
     const fetchTasks = async () => {
-      const fetchedTasks = await api.getTasks();
-      const newTasks = {
-        'new': [],
-        'in progress': [],
-        'completed': [],
-      };
-      fetchedTasks.forEach(task => {
-        newTasks[task.status].push({...task, index: newTasks[task.status].length});
-      });
-      setTasks(newTasks);
+      try {
+        const tasks = await api.getTasks();
+        console.error("Ответ от апи:", tasks);
+
+        // Создание массива boards с данными из базы данных
+        const boards = [
+          {id: 1, title: "new", items: []},
+          {id: 2, title: "in progress", items: []},
+          {id: 3, title: "completed", items: []}
+        ];
+
+        // Перебор полученных задач и распределение их по соответствующим колонкам
+        tasks.forEach(task => {
+          const boardIndex = boards.findIndex(board => board.title === task.status);
+          if (boardIndex !== -1) {
+            boards[boardIndex].items.push({
+              id: task.id,
+              title: task.title,
+              // Добавьте другие необходимые поля, например, description
+            });
+          } else {
+            console.error(`Не найдена колонка для задачи с id ${task.id} и статусом ${task.status}`);
+          }
+        });
+
+        // Сохранение полученного массива boards в state
+        setBoards(boards);
+      } catch (error) {
+        console.error("Ошибка при получении задач:", error);
+      }
     };
+
     fetchTasks();
   }, []);
 
-  const handleOnDragEnd = (result) => {
-    if (!result.destination) return;
+  const [currentBoard, setCurrentBoard] = useState(null)
+  const [currentItem, setCurrentItem] = useState(null)
 
-    const items = Array.from(tasks[result.source.droppableId]);
-    const [reorderedItem] = items.splice(result.source.index, 1);
-    items.splice(result.destination.index, 0, reorderedItem);
-
-    const newTasks = {
-      ...tasks,
-      [result.source.droppableId]: items,
-    };
-
-    if (result.destination.droppableId !== result.source.droppableId) {
-      const targetItems = Array.from(tasks[result.destination.droppableId]);
-      targetItems.splice(result.destination.index, 0, reorderedItem);
-      newTasks[result.destination.droppableId] = targetItems;
-      newTasks[result.source.droppableId] = items;
-
-      // Обновление статуса задачи на сервере
-      api.updateTaskStatus(reorderedItem.id, result.destination.droppableId);
+  function dragOverHandler(e, board, item) {
+    e.preventDefault()
+    if(e.target.className === 'item') {
+      e.target.style.boxShadow = '0 4px 3px gray'
     }
+  }
 
-    setTasks(newTasks);
-  };
+  function dragLeaveHandler(e) {
+    e.target.style.boxShadow = 'none'
+  }
 
-  const handleCreateTask = async (event) => {
-    event.preventDefault();
-    if (newTaskTitle.trim() === '') return;
+  function dragEndHandler(e) {
+    e.target.style.boxShadow = 'none'
+  }
 
-    const createdTask = await api.createTask({
-      title: newTaskTitle,
-      status: 'new', // Создаем задачу со статусом 'new'
-    });
+  function dropHandler(e, board, item) {
+    e.preventDefault()
+    e.stopPropagation()
+    const currentIndex = currentBoard.items.indexOf(currentItem)
+    currentBoard.items.splice(currentIndex, 1)
+    const dropIndex = board.items.indexOf(item)
+    board.items.splice(dropIndex + 1, 0, currentItem)
+    setBoards(boards.map(b => {
+      if (b.id === board.id) {
+        return board
+      }
+      if (b.id === currentBoard.id) {
+        return currentBoard
+      }
+      return b
+    }))
+    e.target.style.boxShadow = 'none'
+  }
 
-    setTasks({
-      ...tasks,
-      new: [...tasks.new, { ...createdTask, index: tasks.new.length }],
-    });
+  function dragStartHandler(e, board, item) {
+    setCurrentBoard(board)
+    setCurrentItem(item)
+  }
 
-    setNewTaskTitle(''); // Очищаем поле ввода
-  };
+
+  function dropCardHandler(e, board) {
+    board.items.push(currentItem)
+    const currentIndex = currentBoard.items.indexOf(currentItem)
+    currentBoard.items.splice(currentIndex, 1)
+    setBoards(boards.map(b => {
+      if (b.id === board.id) {
+        return board
+      }
+      if (b.id === currentBoard.id) {
+        return currentBoard
+      }
+      return b
+    }))
+    e.target.style.boxShadow = 'none'
+  }
 
   return (
-    <div className="App">
-      <h1>Канбан-доска</h1>
-      <form onSubmit={handleCreateTask}>
-        <input
-          type="text"
-          placeholder="Введите название задачи"
-          value={newTaskTitle}
-          onChange={(e) => setNewTaskTitle(e.target.value)}
-        />
-        <button type="submit">Добавить задачу</button>
-      </form>
-      <DragDropContext onDragEnd={handleOnDragEnd}>
-        <div className="KanbanBoard">
-          {Object.entries(tasks).map(([columnId, columnTasks]) => (
-            <Column key={columnId} columnId={columnId} tasks={columnTasks} />
-          ))}
-        </div>
-      </DragDropContext>
-    </div>
+      <div className="app">
+        {boards.map(board =>
+            <div
+                className="board"
+                onDragOver={(e) => dragOverHandler(e)}
+                onDrop={(e) => dropCardHandler(e, board)}
+            >
+                <div className="board__title">{board.title}</div>
+                {board.items.map(item =>
+                    <div
+                        draggable={true}
+                        onDragStart={(e) => dragStartHandler(e, board, item)}
+                        onDragLeave={(e) => dragLeaveHandler(e)}
+                        onDragEnd={(e) => dragEndHandler(e)}
+                        onDragOver={(e) => dragOverHandler(e)}
+                        onDrop={(e) => dropHandler(e, board, item)}
+                        className="item">{item.title}</div>
+                )}
+            </div>
+        )}
+      </div>
   );
 }
 
