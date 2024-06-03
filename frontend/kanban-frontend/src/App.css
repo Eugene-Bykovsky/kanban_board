@@ -98,3 +98,13 @@ button:hover {
 .item:active {
   cursor: grabbing;
 }
+
+.item__title {
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.item__description {
+  font-size: 0.875rem;
+  color: #555;
+}

@@ -24,7 +24,8 @@ function App() {
           if (boardIndex !== -1) {
             boards[boardIndex].items.push({
               id: task.id,
-              title: task.title
+              title: task.title,
+              description: task.description
             })
           } else {
             console.error(`Не найдена колонка для задачи с id ${task.id} и статусом ${task.status}`);
@@ -166,7 +167,10 @@ function App() {
                 onDrop={(e) => dropHandler(e, board, item)}
                 className="item"
                 key={item.id}
-              >{item.title}</div>
+              >
+                <div className="item__title">{item.title}</div>
+                <div className="item__description">{item.description}</div>
+              </div>
             )}
           </div>
         )}
