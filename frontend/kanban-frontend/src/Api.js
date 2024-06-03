@@ -11,10 +11,8 @@ const api = {
     const response = await axios.post(`${apiUrl}/tasks/`, taskData);
     return response.data;
   },
-  updateTaskStatus: async (taskId, newStatus) => {
-    const response = await axios.put(`${apiUrl}/tasks/${taskId}/`, {
-      status: newStatus,
-    });
+  updateTaskStatus: async (taskId, updatedTask) => {
+    const response = await axios.put(`${apiUrl}/tasks/${taskId}/`, updatedTask);
     return response.data;
   },
 };
