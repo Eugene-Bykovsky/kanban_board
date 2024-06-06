@@ -6,6 +6,7 @@ function App() {
   const [boards, setBoards] = useState([]);
   const [newTaskTitle, setNewTaskTitle] = useState('');
   const [newTaskDescription, setNewTaskDescription] = useState('');
+  const [newTaskVisible, setNewTaskVisible] = useState(false);
 
   useEffect(() => {
     const fetchTasks = async () => {
@@ -130,24 +131,33 @@ function App() {
     }
   };
 
+  const toggleNewTaskVisibility = () => {
+    setNewTaskVisible(!newTaskVisible);
+  };
+
   return (
     <div className="app">
-      <form onSubmit={handleNewTaskSubmit}>
-        <input
-          type="text"
-          value={newTaskTitle}
-          onChange={(e) => setNewTaskTitle(e.target.value)}
-          placeholder="Task Title"
-          required
-        />
-        <textarea
-          value={newTaskDescription}
-          onChange={(e) => setNewTaskDescription(e.target.value)}
-          placeholder="Task Description"
-          required
-        />
-        <button type="submit">Create Task</button>
-      </form>
+      <button onClick={toggleNewTaskVisibility}>
+        {newTaskVisible ? "Свернуть блок создания задач" : "Создать новую задачу"}
+      </button>
+      {newTaskVisible && (
+        <form onSubmit={handleNewTaskSubmit}>
+          <input
+            type="text"
+            value={newTaskTitle}
+            onChange={(e) => setNewTaskTitle(e.target.value)}
+            placeholder="Task Title"
+            required
+          />
+          <textarea
+            value={newTaskDescription}
+            onChange={(e) => setNewTaskDescription(e.target.value)}
+            placeholder="Task Description"
+            required
+          />
+          <button type="submit">Create Task</button>
+        </form>
+      )}
       <div className="boards-container">
         {boards.map(board =>
           <div
