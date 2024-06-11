@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from .serializers import TaskSerializer
@@ -34,7 +36,15 @@ class TaskDetailView(APIView):
         except Task.DoesNotExist:
             return Response({'error': 'Task not found'}, status=404)
 
-        serializer = TaskSerializer(task, data=request.data)
+        data = request.data.copy()  # Создаем копию данных
+        if 'deadline' in data:  # Проверяем, есть ли ключ 'deadline' в данных
+            # Преобразуем дату в нужный формат
+            data['deadline'] = datetime.strptime(data['deadline'],
+                                                 '%d.%m.%y').strftime(
+                '%Y-%m-%d')
+
+        serializer = TaskSerializer(task,
+                                    data=data)  # Передаем обновленные данные в сериализатор
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)

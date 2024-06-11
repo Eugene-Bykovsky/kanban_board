@@ -7,16 +7,17 @@ function App() {
   const [newTaskTitle, setNewTaskTitle] = useState('');
   const [newTaskDescription, setNewTaskDescription] = useState('');
   const [newTaskVisible, setNewTaskVisible] = useState(false);
+  const [expandedTaskId, setExpandedTaskId] = useState(null);
 
   useEffect(() => {
     const fetchTasks = async () => {
       try {
         const tasks = await api.getTasks();
-        console.error("Ответ от апи:", tasks);
+        console.info("Ответ от апи:", tasks);
 
         const boards = [
           { id: 1, title: "new", items: [] },
-          { id: 2, title: "in progress", items: [] },
+          { id: 2, title: "in_progress", items: [] },
           { id: 3, title: "completed", items: [] }
         ];
 
@@ -26,13 +27,15 @@ function App() {
             boards[boardIndex].items.push({
               id: task.id,
               title: task.title,
-              description: task.description
+              description: task.description,
+              executor: task.executor,
+              priority: task.priority,
+              deadline: task.deadline,
             })
           } else {
             console.error(`Не найдена колонка для задачи с id ${task.id} и статусом ${task.status}`);
           }
         });
-
         setBoards(boards);
       } catch (error) {
         console.error("Ошибка при получении задач:", error);
@@ -67,6 +70,7 @@ function App() {
     currentBoard.items.splice(currentIndex, 1);
     const dropIndex = board.items.indexOf(item);
     board.items.splice(dropIndex + 1, 0, currentItem);
+    await updateTaskStatus(currentItem, board.title);
     setBoards(boards.map(b => {
       if (b.id === board.id) {
         return board;
@@ -135,6 +139,10 @@ function App() {
     setNewTaskVisible(!newTaskVisible);
   };
 
+  const toggleDescription = (itemId) => {
+    setExpandedTaskId(prevId => (prevId === itemId ? null : itemId));
+  };
+
   return (
     <div className="app">
       <button onClick={toggleNewTaskVisibility}>
@@ -178,8 +186,17 @@ function App() {
                 className="item"
                 key={item.id}
               >
-                <div className="item__title">{item.title}</div>
-                <div className="item__description">{item.description}</div>
+                <div className="item__header" onClick={() => toggleDescription(item.id)}>
+                  <div className="item__title" title="Нажмите, чтобы открыть описание задачи">{item.title}</div>
+                  {expandedTaskId === item.id && (
+                    <div className="item__description">{item.description}</div>
+                  )}
+                </div>
+                <div className="item__executor" title="Исполнитель задачи">{item.executor.first_name} {item.executor.last_name}</div>
+                <div className="item__footer">
+                  <div className="item__priority" title="Приоритет задачи">{item.priority}</div>
+                  <div className="item__deadline" title="Крайний срок выполнения задачи">{item.deadline}</div>
+                </div>
               </div>
             )}
           </div>
