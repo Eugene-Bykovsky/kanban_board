@@ -43,8 +43,7 @@ class TaskDetailView(APIView):
                                                  '%d.%m.%y').strftime(
                 '%Y-%m-%d')
 
-        serializer = TaskSerializer(task,
-                                    data=data)  # Передаем обновленные данные в сериализатор
+        serializer = TaskSerializer(task, data=data)  # Передаем обновленные данные в сериализатор
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)

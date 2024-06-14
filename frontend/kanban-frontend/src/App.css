@@ -29,15 +29,15 @@ form {
 
 input, textarea {
   width: 100%;
-  padding: 10px;
-  margin-bottom: 10px;
+  padding: 5px;
+  margin-bottom: 5px;
   border: 1px solid #ccc;
   border-radius: 4px;
   font-size: 1rem;
 }
 
 button {
-  padding: 10px;
+  padding: 5px;
   border: none;
   border-radius: 4px;
   background-color: #007bff;
@@ -65,13 +65,15 @@ button:hover {
   background-color: #f5f5f5;
   margin: 10px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  min-height: 50vh;
+  max-height: max-content;
 }
 
 .board__title {
   text-align: center;
   font-size: 1.25rem;
   font-weight: bold;
-  padding: 10px;
+  padding: 5px;
   color: #333;
   background-color: #e4e4e4;
   border-radius: 8px 8px 0 0;
@@ -80,8 +82,8 @@ button:hover {
 .item {
   position: relative;
   border-radius: 8px;
-  margin: 10px;
-  padding: 10px;
+  margin: 5px;
+  padding: 5px;
   background-color: #fff;
   transition: box-shadow 0.3s, background-color 0.3s;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -92,8 +94,8 @@ button:hover {
 .item__title {
   font-family: 'Montserrat', sans-serif;
   font-weight: bold;
-  font-size: 1.2rem;
-  padding: 10px 0;
+  font-size: 1rem;
+  padding: 5px 0;
   cursor: pointer;
 }
 
@@ -103,13 +105,13 @@ button:hover {
 }
 
 .item__description {
-  padding: 0 0 10px 0;
+  padding: 0 0 5px 0;
 }
 
 .item__footer {
   display: flex;
   justify-content: space-between;
-  margin-top: 10px;
+  margin-top: 5px;
 }
 
 .item__priority,

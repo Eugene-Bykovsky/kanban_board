@@ -56,11 +56,15 @@ function App() {
   }
 
   function dragLeaveHandler(e) {
-    e.target.style.boxShadow = 'none';
+    if (e.target.className === 'item') {
+      e.target.style.boxShadow = 'none';
+    }
   }
 
   function dragEndHandler(e) {
-    e.target.style.boxShadow = 'none';
+    if (e.target.className === 'item') {
+      e.target.style.boxShadow = 'none';
+    }
   }
 
   async function dropHandler(e, board, item) {
@@ -80,7 +84,9 @@ function App() {
       }
       return b;
     }));
-    e.target.style.boxShadow = 'none';
+    if (e.target.className === 'item') {
+      e.target.style.boxShadow = 'none';
+    }
   }
 
   async function dropCardHandler(e, board) {
@@ -100,7 +106,9 @@ function App() {
       }
       return b;
     }));
-    e.target.style.boxShadow = 'none';
+    if (e.target.className === 'item') {
+      e.target.style.boxShadow = 'none';
+    }
   }
 
   function dragStartHandler(e, board, item) {
@@ -145,27 +153,6 @@ function App() {
 
   return (
     <div className="app">
-      <button onClick={toggleNewTaskVisibility}>
-        {newTaskVisible ? "Свернуть блок создания задач" : "Создать новую задачу"}
-      </button>
-      {newTaskVisible && (
-        <form onSubmit={handleNewTaskSubmit}>
-          <input
-            type="text"
-            value={newTaskTitle}
-            onChange={(e) => setNewTaskTitle(e.target.value)}
-            placeholder="Task Title"
-            required
-          />
-          <textarea
-            value={newTaskDescription}
-            onChange={(e) => setNewTaskDescription(e.target.value)}
-            placeholder="Task Description"
-            required
-          />
-          <button type="submit">Create Task</button>
-        </form>
-      )}
       <div className="boards-container">
         {boards.map(board =>
           <div
