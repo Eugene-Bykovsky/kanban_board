@@ -17,9 +17,9 @@ class Task(models.Model):
     ]
 
     STATUS_CHOICES = [
-        ('new', 'New'),
-        ('in_progress', 'In Progress'),
-        ('completed', 'Completed')
+        ('Стек задач', 'Стек задач'),
+        ('В процессе выполнения', 'В процессе выполнения'),
+        ('Выполнено', 'Выполнено')
     ]
 
     title = models.CharField(max_length=255)
@@ -30,8 +30,7 @@ class Task(models.Model):
     executor = models.ForeignKey(CustomUser, on_delete=models.SET_NULL,
                                  null=True,
                                  blank=True)
-    priority = models.CharField(max_length=255, choices=PRIORITY_CHOICES,
-                                null=True, blank=True)
+    priority = models.BooleanField(default=False)
     deadline = models.DateField(null=True, blank=True)
 
     def __str__(self):

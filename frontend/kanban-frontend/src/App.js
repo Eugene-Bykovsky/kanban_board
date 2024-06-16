@@ -16,9 +16,9 @@ function App() {
         console.info("Ответ от апи:", tasks);
 
         const boards = [
-          { id: 1, title: "new", items: [] },
-          { id: 2, title: "in_progress", items: [] },
-          { id: 3, title: "completed", items: [] }
+          { id: 1, title: "Стек задач", items: [] },
+          { id: 2, title: "В процессе выполнения", items: [] },
+          { id: 3, title: "Выполнено", items: [] }
         ];
 
         tasks.forEach(task => {
@@ -181,7 +181,9 @@ function App() {
                 </div>
                 <div className="item__executor" title="Исполнитель задачи">{item.executor.first_name} {item.executor.last_name}</div>
                 <div className="item__footer">
-                  <div className="item__priority" title="Приоритет задачи">{item.priority}</div>
+                  <div className="item__priority" title="Приоритет задачи">
+                    {item.priority ? "Срочно" : ""}
+                  </div>
                   <div className="item__deadline" title="Крайний срок выполнения задачи">{item.deadline}</div>
                 </div>
               </div>
