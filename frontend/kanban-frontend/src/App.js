@@ -181,7 +181,7 @@ function App() {
                 </div>
                 <div className="item__executor" title="Исполнитель задачи">{item.executor.first_name} {item.executor.last_name}</div>
                 <div className="item__footer">
-                  <div className="item__priority" title="Приоритет задачи">
+                  <div className="item__priority" style={{ backgroundColor: item.priority ? '#ffc107' : 'transparent' }} title="Приоритет задачи">
                     {item.priority ? "Срочно" : ""}
                   </div>
                   <div className="item__deadline" title="Крайний срок выполнения задачи">{item.deadline}</div>
