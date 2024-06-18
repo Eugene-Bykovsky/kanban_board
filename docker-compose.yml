@@ -1,0 +1,21 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: ./backend
+    container_name: backend
+    volumes:
+      - ./backend/kanban_backend:/app
+    ports:
+      - "8000:8000"
+
+
+  frontend:
+    build:
+      context: ./frontend
+    container_name: frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
