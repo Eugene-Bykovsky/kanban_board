@@ -5,6 +5,10 @@ from django.contrib.auth.models import AbstractUser
 class CustomUser(AbstractUser):
     telegram_id = models.CharField(max_length=100, blank=True, null=True)
 
+    class Meta:
+        verbose_name = 'Пользователь'
+        verbose_name_plural = 'Пользователи'
+
     def __str__(self):
         return self.username
 
@@ -32,6 +36,10 @@ class Task(models.Model):
                                  blank=True)
     priority = models.BooleanField(default=False)
     deadline = models.DateField(null=True, blank=True)
+
+    class Meta:
+        verbose_name = 'Задача'
+        verbose_name_plural = 'Задачи'
 
     def __str__(self):
         return self.title

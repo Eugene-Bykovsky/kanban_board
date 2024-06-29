@@ -1,5 +1,6 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
+from django.contrib.auth.models import Group
 from .models import CustomUser, Task
 
 
@@ -19,3 +20,6 @@ class CustomUserAdmin(UserAdmin):
 
 admin.site.register(CustomUser, CustomUserAdmin)
 admin.site.register(Task)
+admin.site.unregister(Group)
+admin.site.site_header = 'Административная страница приложения "Kanban board"'
+admin.site.index_title = 'Приложения'
